@@ -1,4 +1,17 @@
-import { useEffect, useMemo, useState } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
+import { AnimatePresence, MotionConfig, motion, useReducedMotion, useScroll, useSpring } from 'motion/react'
+import Lenis from 'lenis'
+import confetti from 'canvas-confetti'
+import { FaAmazon, FaMicrosoft } from 'react-icons/fa6'
+import {
+  siGoogle,
+  siTcs,
+  siInfosys,
+  siWipro,
+  siAccenture,
+  siHcl,
+  siZoho,
+} from 'simple-icons'
 import {
   Activity,
   ArrowRight,
@@ -29,17 +42,27 @@ import {
   Rocket,
   Search,
   Sparkles,
+  Sun,
+  Moon,
   Target,
   Trophy,
   Users,
   X,
 } from 'lucide-react'
 import './App.css'
+import DokiAssistant from './components/DokiAssistant.jsx'
+import InteractiveButton from './components/InteractiveButton.jsx'
+import SkillRoadmapDemo from './components/SkillRoadmapDemo.jsx'
+import CodingPlayground from './components/CodingPlayground.jsx'
+import ibmLogo from './assets/logos/ibm.svg'
+import adobeLogo from './assets/logos/adobe.svg'
+
+const SkillEngine3D = lazy(() => import('./components/SkillEngine3D.jsx'))
 
 const sidebarLinks = [
   { id: 'home', label: 'Home', icon: Home },
   { id: 'learn', label: 'Learn', icon: BookOpen },
-  { id: 'build', label: 'Build', icon: Code2 },
+  { id: 'playground', label: 'Build', icon: Code2 },
   { id: 'hackathons', label: 'Hackathons', icon: Rocket },
   { id: 'colleges', label: 'Colleges', icon: GraduationCap },
   { id: 'faq', label: 'FAQ', icon: CircleHelp },
@@ -84,12 +107,17 @@ const featureCards = [
 ]
 
 const companies = [
-  { name: 'Google', group: 'Product Based', focus: 'Algorithms · Problem solving', color: 'google' },
-  { name: 'Microsoft', group: 'Product Based', focus: 'DSA · Core computer science', color: 'microsoft' },
-  { name: 'Amazon', group: 'Product Based', focus: 'Coding · Aptitude · Interviews', color: 'amazon' },
-  { name: 'TCS', group: 'IT Services', focus: 'Aptitude · Programming basics', color: 'tcs' },
-  { name: 'Infosys', group: 'IT Services', focus: 'Reasoning · Coding · Interviews', color: 'infosys' },
-  { name: 'Zoho', group: 'Startups', focus: 'Programming · Product thinking', color: 'zoho' },
+  { name: 'Google', group: 'Product Based', focus: 'Algorithms · Problem solving', color: 'google', logo: siGoogle },
+  { name: 'Microsoft', group: 'Product Based', focus: 'DSA · Core computer science', color: 'microsoft', logoComponent: FaMicrosoft },
+  { name: 'Amazon', group: 'Product Based', focus: 'Coding · Aptitude · Interviews', color: 'amazon', logoComponent: FaAmazon },
+  { name: 'TCS', group: 'IT Services', focus: 'Aptitude · Programming basics', color: 'tcs', logo: siTcs },
+  { name: 'Infosys', group: 'IT Services', focus: 'Reasoning · Coding · Interviews', color: 'infosys', logo: siInfosys },
+  { name: 'Wipro', group: 'IT Services', focus: 'Reasoning · Programming · Interviews', color: 'wipro', logo: siWipro },
+  { name: 'Accenture', group: 'IT Services', focus: 'Aptitude · Coding · Role skills', color: 'accenture', logo: siAccenture },
+  { name: 'HCLTech', group: 'IT Services', focus: 'Programming · Core technology · Interviews', color: 'hcltech', logo: siHcl },
+  { name: 'IBM', group: 'Product Based', focus: 'Computer science · Coding · Interviews', color: 'ibm', logoSrc: ibmLogo },
+  { name: 'Adobe', group: 'Product Based', focus: 'Algorithms · Problem solving · Design', color: 'adobe', logoSrc: adobeLogo },
+  { name: 'Zoho', group: 'Startups', focus: 'Programming · Product thinking', color: 'zoho', logo: siZoho },
 ]
 
 const faqs = [
@@ -112,9 +140,25 @@ const practiceOptions = [
   { id: 'c', text: 'A binary search tree', correct: false },
 ]
 
-function SkillEngineVisual() {
+const heroHeadlineWords = ['Your', 'dream', 'tech', 'career', 'starts', 'with', 'what', 'you', 'do', 'today.']
+
+function SkillEngineVisual({ reducedMotion }) {
+  const [show3d, setShow3d] = useState(false)
+
+  useEffect(() => {
+    const media = window.matchMedia('(min-width: 701px) and (prefers-reduced-motion: no-preference)')
+    const updateScene = () => setShow3d(media.matches && !reducedMotion)
+    updateScene()
+    media.addEventListener('change', updateScene)
+    window.addEventListener('resize', updateScene, { passive: true })
+    return () => {
+      media.removeEventListener('change', updateScene)
+      window.removeEventListener('resize', updateScene)
+    }
+  }, [reducedMotion])
+
   return (
-    <div className="engine-scene" role="img" aria-label="Illustration of a student connecting coding, DSA, aptitude, projects, and interview skills through the Dkoder Skill Engine">
+    <motion.div className="engine-scene" role="img" aria-label="Illustration of a student connecting coding, DSA, aptitude, projects, and interview skills through the Dkoder Skill Engine" initial={{ opacity: 0, scale: 0.94, y: 12 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.8, delay: reducedMotion ? 0 : 1.9, ease: 'easeOut' }}>
       <div className="scene-grid" />
       <div className="scene-sun" />
       <svg className="skill-routes" viewBox="0 0 650 520" fill="none" aria-hidden="true">
@@ -130,13 +174,13 @@ function SkillEngineVisual() {
       <div className="skill-chip chip-aptitude"><Brain size={15} /><span>Aptitude</span><small>Reasoning</small></div>
       <div className="skill-chip chip-projects"><Laptop2 size={15} /><span>Projects</span><small>Hands-on</small></div>
       <div className="skill-chip chip-interview"><MessageSquareText size={15} /><span>Interviews</span><small>Confidence</small></div>
-      <div className="engine-platform"><span /><span /><span /></div>
-      <div className="engine-body">
-        <div className="engine-cap"><Sparkles size={15} /><span>DKODER SKILL ENGINE</span><Sparkles size={15} /></div>
-        <div className="engine-neck" />
-        <div className="engine-core"><div className="core-glow"><Code2 size={42} strokeWidth={2.7} /></div><span>SKILLS IN MOTION</span></div>
-        <div className="engine-bottom"><Activity size={17} /><span>LEARN</span><ArrowRight size={15} /><span>BUILD</span><ArrowRight size={15} /><span>GROW</span></div>
+      <div className="engine-3d-wrap" aria-hidden="true">
+        <div className="engine-css-model"><i className="engine-css-neck" /><i className="engine-css-cap" /><i className="engine-css-chamber"><b>&lt;/&gt;</b></i><i className="engine-css-base" /></div>
+        {show3d && <Suspense fallback={<div className="engine-canvas-fallback"><Code2 size={36} /></div>}>
+          <SkillEngine3D reducedMotion={reducedMotion} />
+        </Suspense>}
       </div>
+      <div className="engine-label-card"><Sparkles size={14} /><span>DKODER SKILL ENGINE</span><b>LEARN → BUILD → GROW</b></div>
       <div className="student-card">
         <div className="student-head"><span className="student-hair" /><span className="student-face" /><span className="student-neck" /><span className="student-body" /><span className="student-arm" /></div>
         <div className="student-laptop"><span>&lt;/&gt;</span></div>
@@ -145,11 +189,35 @@ function SkillEngineVisual() {
       <div className="engine-note note-confidence"><CheckCircle2 size={15} /> Confusion → confidence</div>
       <div className="engine-spark spark-one">✳</div><div className="engine-spark spark-two">✦</div><div className="engine-spark spark-three">✧</div>
       <div className="engine-shadow" />
-    </div>
+    </motion.div>
   )
 }
 
+function CompanyLogoMark({ company, className }) {
+  if (company.logo) {
+    return <svg className={className} viewBox="0 0 24 24" role="img" aria-label={`${company.name} logo`} focusable="false"><path d={company.logo.path} /></svg>
+  }
+
+  if (company.logoComponent) {
+    const Logo = company.logoComponent
+    return <Logo className={`${className} logo-${company.color}`} role="img" aria-label={`${company.name} logo`} focusable="false" />
+  }
+
+  if (company.logoSrc) {
+    return <img className={`${className} logo-${company.color}`} src={company.logoSrc} alt={`${company.name} logo`} />
+  }
+
+  return <span className={`company-chip-text-fallback company-${company.color}`}>{company.name}</span>
+}
+
 function App() {
+  const shouldReduceMotion = useReducedMotion()
+  const lenisRef = useRef(null)
+  const companyGridRef = useRef(null)
+  const { scrollYProgress } = useScroll()
+  const smoothScrollProgress = useSpring(scrollYProgress, { stiffness: 110, damping: 28, mass: 0.28 })
+  const [theme, setTheme] = useState(() => window.localStorage.getItem('dkoder-theme') || 'light')
+  const [navbarCompact, setNavbarCompact] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [learnMenuOpen, setLearnMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
@@ -158,13 +226,37 @@ function App() {
   const [activeSection, setActiveSection] = useState('home')
   const [selectedAnswer, setSelectedAnswer] = useState('')
   const [answerSubmitted, setAnswerSubmitted] = useState(false)
+  const [answerCorrect, setAnswerCorrect] = useState(false)
+  const practiceCardRef = useRef(null)
+  const celebrationTriggeredRef = useRef(false)
   const [dashboardTab, setDashboardTab] = useState('Overview')
   const [nextStep, setNextStep] = useState(0)
   const [hackathonFilter, setHackathonFilter] = useState('All')
   const [modal, setModal] = useState(null)
   const [openFaq, setOpenFaq] = useState(0)
 
+  useEffect(() => {
+    window.localStorage.setItem('dkoder-theme', theme)
+  }, [theme])
+
+  useEffect(() => {
+    const updateNavbar = () => setNavbarCompact(window.scrollY > 24)
+    updateNavbar()
+    window.addEventListener('scroll', updateNavbar, { passive: true })
+    return () => window.removeEventListener('scroll', updateNavbar)
+  }, [])
+
   const categories = ['All', 'IT Services', 'Product Based', 'Startups']
+
+  useEffect(() => {
+    if (shouldReduceMotion) return undefined
+    const lenis = new Lenis({ autoRaf: true, smoothWheel: true })
+    lenisRef.current = lenis
+    return () => {
+      lenis.destroy()
+      lenisRef.current = null
+    }
+  }, [shouldReduceMotion])
 
   useEffect(() => {
     const sections = document.querySelectorAll('main section[id]')
@@ -203,7 +295,9 @@ function App() {
   const visibleHackathons = hackathons.filter((event) => hackathonFilter === 'All' || event.type === hackathonFilter)
 
   const scrollToSection = (id) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    const target = document.getElementById(id)
+    if (target && lenisRef.current) lenisRef.current.scrollTo(target, { offset: -88 })
+    else target?.scrollIntoView({ behavior: shouldReduceMotion ? 'instant' : 'smooth', block: 'start' })
     setMobileMenuOpen(false)
     setLearnMenuOpen(false)
   }
@@ -211,17 +305,80 @@ function App() {
   const startPractice = () => {
     setSelectedAnswer('')
     setAnswerSubmitted(false)
+    setAnswerCorrect(false)
+    celebrationTriggeredRef.current = false
     scrollToSection('practice')
   }
 
   const submitAnswer = () => {
-    if (selectedAnswer) setAnswerSubmitted(true)
+    if (!selectedAnswer || answerSubmitted) return
+
+    const isCorrect = practiceOptions.find((option) => option.id === selectedAnswer)?.correct === true
+    setAnswerCorrect(isCorrect)
+    setAnswerSubmitted(true)
+
+    if (isCorrect && !celebrationTriggeredRef.current && !shouldReduceMotion && practiceCardRef.current) {
+      celebrationTriggeredRef.current = true
+      const bounds = practiceCardRef.current.getBoundingClientRect()
+      const origin = {
+        x: Math.min(0.9, Math.max(0.1, (bounds.left + bounds.width * 0.62) / window.innerWidth)),
+        y: Math.min(0.9, Math.max(0.1, (bounds.top + bounds.height * 0.52) / window.innerHeight)),
+      }
+
+      confetti({
+        particleCount: 46,
+        spread: 52,
+        startVelocity: 24,
+        gravity: 0.9,
+        ticks: 135,
+        scalar: 0.72,
+        origin,
+        colors: ['#FFC928', '#5524A8', '#FFFFFF', '#8B55CE', '#75C995'],
+        disableForReducedMotion: true,
+      })
+    }
   }
 
-  const answerIsCorrect = practiceOptions.find((option) => option.id === selectedAnswer)?.correct
+  const answerIsCorrect = answerCorrect
+
+  const handleCardPointerMove = (event) => {
+    if (event.pointerType !== 'mouse' || shouldReduceMotion) return
+    const card = event.target.closest('.feature-card, .company-card, .event-card')
+    if (!card) return
+    const bounds = card.getBoundingClientRect()
+    const x = (event.clientX - bounds.left) / bounds.width - 0.5
+    const y = (event.clientY - bounds.top) / bounds.height - 0.5
+    card.style.setProperty('--tilt-x', `${-y * 3.2}deg`)
+    card.style.setProperty('--tilt-y', `${x * 3.2}deg`)
+    card.style.setProperty('--shine-x', `${((event.clientX - bounds.left) / bounds.width) * 100}%`)
+    card.style.setProperty('--shine-y', `${((event.clientY - bounds.top) / bounds.height) * 100}%`)
+  }
+
+  const resetCardTilt = (event) => {
+    const card = event.target.closest('.feature-card, .company-card, .event-card')
+    if (!card || (event.relatedTarget && card.contains(event.relatedTarget))) return
+    card.style.setProperty('--tilt-x', '0deg')
+    card.style.setProperty('--tilt-y', '0deg')
+  }
+
+  const updateHeroGlow = (event) => {
+    if (event.pointerType !== 'mouse' || shouldReduceMotion) return
+    const bounds = event.currentTarget.getBoundingClientRect()
+    const localX = event.clientX - bounds.left
+    const localY = event.clientY - bounds.top
+    event.currentTarget.style.setProperty('--glow-x', `${localX}px`)
+    event.currentTarget.style.setProperty('--glow-y', `${localY}px`)
+    event.currentTarget.style.setProperty('--parallax-x', `${(localX / bounds.width - .5) * 14}px`)
+    event.currentTarget.style.setProperty('--parallax-y', `${(localY / bounds.height - .5) * 10}px`)
+  }
+
+  const toggleTheme = () => setTheme((current) => current === 'light' ? 'dark' : 'light')
 
   return (
-    <div className="page-shell">
+    <MotionConfig reducedMotion="user">
+    <div className="page-shell" data-theme={theme} onPointerMove={handleCardPointerMove} onPointerOut={resetCardTilt}>
+      <div className="ambient-atmosphere" aria-hidden="true"><span className="ambient-orb ambient-orb-yellow" /><span className="ambient-orb ambient-orb-purple" /><span className="ambient-orb ambient-orb-lavender" /><span className="ambient-grain" /></div>
+      <motion.div className="page-scroll-progress" style={{ scaleX: smoothScrollProgress }} aria-hidden="true" />
       <aside className="side-nav" aria-label="Section navigation">
         <a href="#home" className="rail-brand" aria-label="Dkoder home"><span className="brand-mark">D</span></a>
         {sidebarLinks.map(({ id, label, icon: Icon }) => (
@@ -234,14 +391,14 @@ function App() {
       </aside>
 
       <div className="page-content">
-        <header className="topbar">
+        <header className={`topbar ${navbarCompact ? 'topbar-compact' : ''}`}>
           <div className="container nav-wrap">
             <a href="#home" className="brand" aria-label="Dkoder homepage"><span className="brand-mark">D</span><span className="brand-text">Dkoder</span></a>
             <nav className={`main-nav ${mobileMenuOpen ? 'nav-open' : ''}`} aria-label="Main navigation">
               <button className={`nav-link ${activeSection === 'home' ? 'nav-current' : ''}`} onClick={() => scrollToSection('home')}>Home</button>
               <div className="learn-menu-wrap">
                 <button className={`nav-link ${learnMenuOpen ? 'nav-current' : ''}`} aria-expanded={learnMenuOpen} onClick={() => setLearnMenuOpen((value) => !value)}>Learn <ChevronDown size={14} /></button>
-                {learnMenuOpen && <div className="learn-dropdown"><button onClick={() => scrollToSection('learn')}><BookOpen size={16} /> Learning journey</button><button onClick={() => scrollToSection('features')}><Sparkles size={16} /> How Dkoder helps</button><button onClick={startPractice}><Code2 size={16} /> Try practice demo</button></div>}
+                {learnMenuOpen && <div className="learn-dropdown"><button onClick={() => scrollToSection('learn')}><BookOpen size={16} /> Learning journey</button><button onClick={() => scrollToSection('features')}><Sparkles size={16} /> How Dkoder helps</button><button onClick={startPractice}><Code2 size={16} /> Try practice demo</button><button onClick={() => scrollToSection('playground')}><Laptop2 size={16} /> Coding playground</button></div>}
               </div>
               <button className="nav-link" onClick={() => scrollToSection('hackathons')}>Hackathons</button>
               <button className="nav-link" onClick={() => scrollToSection('colleges')}>For Colleges</button>
@@ -250,6 +407,7 @@ function App() {
             <div className="nav-actions">
               {searchOpen && <label className="nav-search"><span className="sr-only">Search company tracks</span><input autoFocus value={searchQuery} onChange={(event) => { setSearchQuery(event.target.value); scrollToSection('tracks') }} placeholder="Search tracks" /></label>}
               <button className="icon-button search-toggle" aria-label={searchOpen ? 'Close track search' : 'Search tracks'} onClick={() => { setSearchOpen((open) => !open); if (!searchOpen) scrollToSection('tracks') }}><Search size={18} /></button>
+              <button type="button" className="icon-button theme-toggle" aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`} aria-pressed={theme === 'dark'} onClick={toggleTheme}>{theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}</button>
               <button className="dashboard-cta" onClick={() => scrollToSection('dashboard')}><span className="dashboard-cta-icon">▦</span> Go to Dashboard <ArrowUpRight size={15} /></button>
             </div>
             <button type="button" className="menu-toggle" aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'} aria-expanded={mobileMenuOpen} onClick={() => setMobileMenuOpen((prev) => !prev)}>{mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}</button>
@@ -257,16 +415,31 @@ function App() {
         </header>
 
         <main>
-          <section className="hero-section" id="home">
+          <section className="hero-section" id="home" onPointerMove={updateHeroGlow}>
             <div className="container hero-grid">
-              <div className="hero-copy reveal">
-                <span className="eyebrow"><span className="eyebrow-dot" /> PLACEMENT PREPARATION PLATFORM</span>
-                <h1>Your dream tech career starts with what you do <span>today.</span></h1>
-                <p className="hero-text">Learn concepts, practise with purpose, build real skills, and prepare for assessments—one focused step closer to your dream job.</p>
-                <div className="hero-actions"><button className="primary-btn" onClick={() => scrollToSection('learn')}>Start Learning <ArrowRight size={17} /></button><button className="secondary-btn" onClick={() => scrollToSection('tracks')}>Explore Company Tracks</button></div>
-                <div className="hero-proof"><span className="proof-icon"><Check size={14} /></span><span>A clear path from <b>curious</b> to <b>career-ready</b></span></div>
-              </div>
-              <SkillEngineVisual />
+              <motion.div className="hero-copy" initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.48, ease: 'easeOut' }}>
+                <motion.span className="eyebrow" initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.38, delay: shouldReduceMotion ? 0 : 0.08 }}><span className="eyebrow-dot" /> PLACEMENT PREPARATION PLATFORM</motion.span>
+                <h1 aria-label="Your dream tech career starts with what you do today.">
+                  <span className="hero-headline-visual" aria-hidden="true">
+                    {heroHeadlineWords.map((word, index) => (
+                      <span key={`${word}-${index}`}>
+                        <motion.span
+                          className={`hero-word ${['dream', 'tech', 'career'].includes(word) ? 'hero-highlight' : ''}`}
+                          initial={shouldReduceMotion ? false : { opacity: 0, y: 20, x: index % 2 === 0 ? -7 : 7, filter: 'blur(5px)' }}
+                          animate={{ opacity: 1, y: 0, x: 0, filter: 'blur(0px)' }}
+                          transition={shouldReduceMotion
+                            ? { duration: 0.12, ease: 'easeOut' }
+                            : { type: 'spring', stiffness: 155, damping: 22, mass: 0.82, delay: 0.2 + index * 0.095 }}
+                        >{word}</motion.span>{index < heroHeadlineWords.length - 1 ? ' ' : ''}
+                      </span>
+                    ))}
+                  </span>
+                </h1>
+                <motion.p className="hero-text" initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.42, delay: shouldReduceMotion ? 0 : 1.28 }}>Learn concepts, practise with purpose, build real skills, and prepare for assessments—one focused step closer to your dream job.</motion.p>
+                <motion.div className="hero-actions" initial={shouldReduceMotion ? false : { opacity: 0, y: 9 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.42, delay: shouldReduceMotion ? 0 : 1.62 }}><InteractiveButton className="primary-btn" magnetic onClick={() => scrollToSection('learn')}>Start Exploring <ArrowRight size={17} /></InteractiveButton><motion.button className="secondary-btn" whileHover={{ y: -3 }} whileTap={{ scale: 0.98 }} onClick={() => scrollToSection('learn')}>Explore the Journey</motion.button></motion.div>
+                <motion.div className="hero-proof" initial={shouldReduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: shouldReduceMotion ? 0 : 1.82 }}><span className="proof-icon"><Check size={14} /></span><span>A clear path from <b>curious</b> to <b>career-ready</b></span></motion.div>
+              </motion.div>
+              <SkillEngineVisual reducedMotion={shouldReduceMotion} />
             </div>
             <div className="hero-scroll-cue"><span /> Scroll to explore</div>
           </section>
@@ -282,22 +455,23 @@ function App() {
               <div className="journey-stages">
                 {journeySteps.map(({ id, number, title, subtitle, description, icon: Icon, target }, index) => (
                   <div className="journey-stage-wrap" key={id}>
-                    <button className={`journey-stage stage-${id} reveal`} onClick={() => scrollToSection(target)} aria-label={`${title}: ${description}`}>
+                    <motion.button className={`journey-stage stage-${id} reveal`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 0.45, delay: index * 0.12 }} whileHover={{ y: -5, rotate: index === 1 ? 1 : -1 }} whileTap={{ scale: 0.97 }} onClick={() => scrollToSection(target)} aria-label={`${title}: ${description}`}>
                       <span className="stage-art"><Icon size={34} strokeWidth={1.8} /><span className="stage-art-orbit" /></span>
                       <span className="stage-number">{number}</span><strong>{title}</strong><span className="stage-subtitle">{subtitle}</span>
-                    </button>
+                    </motion.button>
                     {index < journeySteps.length - 1 && <ArrowRight className="journey-arrow" size={21} aria-hidden="true" />}
                   </div>
                 ))}
               </div>
             </div>
+            <div className="container"><SkillRoadmapDemo /></div>
           </section>
 
           <section className="features-section section-wrap" id="features">
             <div className="container feature-layout">
               <div className="section-heading feature-heading reveal"><span className="eyebrow eyebrow-purple"><Sparkles size={14} /> HOW DKODER HELPS YOU</span><h2>Everything you need,<br />all in one place.</h2><p>Small, steady steps make the big goals feel closer.</p></div>
               <div className="features-grid">
-                {featureCards.map(({ title, description, icon: Icon, tone }, index) => <article className={`feature-card feature-${tone} reveal`} key={title} style={{ '--delay': `${index * 70}ms` }}><div className="feature-icon"><Icon size={21} /></div><h3>{title}</h3><p>{description}</p><button className="feature-link" onClick={() => scrollToSection(title === 'Company tracks' ? 'tracks' : title === 'Progress tracking' ? 'dashboard' : 'practice')} aria-label={`Explore ${title}`}>Explore <ArrowUpRight size={14} /></button></article>)}
+                {featureCards.map(({ title, description, icon: Icon, tone }, index) => <article className={`feature-card feature-${tone} reveal`} key={title} style={{ '--delay': `${index * 70}ms` }}><div className="feature-icon"><Icon size={21} /></div><h3>{title}</h3><p>{description}</p><button className="feature-link" onClick={() => scrollToSection(title === 'Company tracks' ? 'tracks' : title === 'Progress tracking' ? 'dashboard' : title === 'Coding practice' ? 'playground' : 'practice')} aria-label={`Explore ${title}`}>Explore <ArrowUpRight size={14} /></button></article>)}
               </div>
             </div>
           </section>
@@ -307,19 +481,52 @@ function App() {
               <div className="tracks-heading"><div className="section-heading reveal"><span className="eyebrow eyebrow-purple"><BriefcaseBusiness size={14} /> COMPANY PREPARATION TRACKS</span><h2>Target your dream company.</h2><p>Illustrative practice themes—not official or affiliated company programs.</p></div>
                 <label className="track-search"><Search size={17} /><span className="sr-only">Search companies or skills</span><input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search companies..." /><kbd>/</kbd></label>
               </div>
+              <div className="company-showcase reveal">
+                <div className="company-showcase-heading">
+                  <div><span className="showcase-kicker"><Sparkles size={13} /> PREPARE FOR YOUR DREAM COMPANY</span><h3>Your next opportunity starts here.</h3><p>Explore independent preparation themes for companies that inspire your next step.</p></div>
+                  <span className="independent-note">Independent preparation · No affiliations</span>
+                </div>
+                <div className="company-logo-strip" role="group" aria-label="Explore company preparation tracks" tabIndex={0}>
+                  {companies.map((company, index) => (
+                    <motion.button
+                      type="button"
+                      key={company.name}
+                      className={`company-logo-chip logo-${company.color}`}
+                      aria-label={`Show ${company.name} preparation track`}
+                      onClick={() => {
+                        setActiveCategory('All')
+                        setSearchQuery(company.name)
+                        if (companyGridRef.current && lenisRef.current) lenisRef.current.scrollTo(companyGridRef.current, { offset: -135 })
+                        else companyGridRef.current?.scrollIntoView({ behavior: shouldReduceMotion ? 'instant' : 'smooth', block: 'center' })
+                      }}
+                      initial={{ opacity: 0, y: 12 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, amount: .3 }}
+                      transition={{ duration: .32, delay: index * .045 }}
+                      whileHover={{ y: -3, scale: 1.025 }}
+                      whileTap={{ scale: .98 }}
+                    >
+                      <CompanyLogoMark company={company} className="company-chip-logo" />
+                      <span>{company.name}</span>
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
               <div className="filter-row" role="group" aria-label="Filter company tracks">{categories.map((category) => <button key={category} className={`filter-btn ${activeCategory === category ? 'active' : ''}`} aria-pressed={activeCategory === category} onClick={() => setActiveCategory(category)}>{category}</button>)}</div>
-              <div className="company-grid" aria-live="polite">{filteredCompanies.length ? filteredCompanies.map((company) => <article className="company-card reveal" key={company.name}><div className={`company-wordmark ${company.color}`}>{company.name}</div><span className="company-category">{company.group}</span><p>{company.focus}</p><button className="text-btn" onClick={() => setModal({ title: `${company.name} preparation preview`, eyebrow: 'Illustrative company track', body: `This sample track groups practice ideas such as ${company.focus.toLowerCase()}. It is an independent learning preview and does not represent an official company program or affiliation.` })}>Explore track <ArrowRight size={15} /></button></article>) : <div className="empty-state"><Search size={23} /><strong>No matching tracks</strong><span>Try another company or skill keyword.</span></div>}</div>
+              <div className="company-grid" aria-live="polite" ref={companyGridRef}>{filteredCompanies.length ? filteredCompanies.map((company) => <article className="company-card reveal" key={company.name}><div className="company-card-brand"><CompanyLogoMark company={company} className="company-card-logo" /><div className={`company-wordmark ${company.color}`}>{company.name}</div></div><span className="company-category">{company.group}</span><p>{company.focus}</p><button className="text-btn" onClick={() => setModal({ title: `${company.name} preparation preview`, eyebrow: 'Illustrative company track', body: `This sample track groups practice ideas such as ${company.focus.toLowerCase()}. It is an independent learning preview and does not represent an official company program or affiliation.` })}>Explore track <ArrowRight size={15} /></button></article>) : <div className="empty-state"><Search size={23} /><strong>No matching tracks</strong><span>Try another company or skill keyword.</span></div>}</div>
             </div>
           </section>
 
           <section className="practice-section section-wrap" id="practice">
             <div className="container practice-layout">
               <div className="practice-copy reveal"><span className="eyebrow eyebrow-purple"><CirclePlay size={14} /> INTERACTIVE PRACTICE PREVIEW</span><h2>One question.<br /><span>One more skill.</span></h2><p>Take a quick sample question, get immediate feedback, and try again. Demo only—your answer stays in this page.</p><div className="practice-micro-stats"><span><Clock3 size={16} /> 1 minute</span><span><Target size={16} /> Fundamentals</span></div></div>
-              <div className="practice-card reveal"><div className="practice-card-top"><span className="demo-label"><span /> DEMO QUESTION</span><span className="question-count">01 <i>/ 01</i></span></div><div className="practice-progress"><span /></div><div className="question-body"><span className="question-topic">DATA STRUCTURES · EASY</span><h3>Which data structure follows the LIFO principle?</h3><div className="answer-options" role="radiogroup" aria-label="Choose an answer">{practiceOptions.map((option) => <button type="button" role="radio" aria-checked={selectedAnswer === option.id} key={option.id} disabled={answerSubmitted} className={`answer-option ${selectedAnswer === option.id ? 'selected' : ''} ${answerSubmitted && option.correct ? 'correct' : ''} ${answerSubmitted && selectedAnswer === option.id && !option.correct ? 'incorrect' : ''}`} onClick={() => setSelectedAnswer(option.id)}><span className="option-letter">{option.id.toUpperCase()}</span>{option.text}{answerSubmitted && option.correct && <CheckCircle2 className="answer-check" size={17} />}</button>)}</div>
-                  {answerSubmitted && <div className={`answer-feedback ${answerIsCorrect ? 'feedback-correct' : 'feedback-incorrect'}`} role="status">{answerIsCorrect ? 'That’s right!' : 'Not quite.'} A stack is Last In, First Out—the most recently added item is removed first.</div>}
-                  <div className="practice-controls"><button className="reset-btn" onClick={() => { setSelectedAnswer(''); setAnswerSubmitted(false) }}><RotateCcw size={15} /> Reset</button><button className="primary-btn practice-submit" onClick={submitAnswer} disabled={!selectedAnswer || answerSubmitted}>{answerSubmitted ? 'Answer checked' : 'Check answer'} <ArrowRight size={16} /></button></div><p className="demo-disclaimer">Sample question · No score or progress is saved.</p></div></div>
+                <div className="practice-card reveal" ref={practiceCardRef}><div className="practice-card-top"><span className="demo-label"><span /> DEMO QUESTION</span><span className="question-count">01 <i>/ 01</i></span></div><div className="practice-progress"><span /></div><div className="question-body"><span className="question-topic">DATA STRUCTURES · EASY</span><h3>Which data structure follows the LIFO principle?</h3><div className="answer-options" role="radiogroup" aria-label="Choose an answer">{practiceOptions.map((option) => <button type="button" role="radio" aria-checked={selectedAnswer === option.id} key={option.id} className={`answer-option ${selectedAnswer === option.id ? 'selected' : ''} ${answerSubmitted && answerIsCorrect && option.correct ? 'correct' : ''} ${answerSubmitted && !answerIsCorrect && selectedAnswer === option.id ? 'incorrect' : ''}`} onClick={() => { setSelectedAnswer(option.id); setAnswerSubmitted(false); setAnswerCorrect(false) }}><span className="option-letter">{option.id.toUpperCase()}</span>{option.text}{answerSubmitted && answerIsCorrect && option.correct && <CheckCircle2 className="answer-check" size={17} />}</button>)}</div>
+                  {answerSubmitted && <div className={`answer-feedback ${answerIsCorrect ? 'feedback-correct' : 'feedback-incorrect'}`} role="status">{answerIsCorrect ? 'Correct! You’re getting closer to your dream tech career! 🎉 A stack is Last In, First Out—the most recently added item is removed first.' : 'Not quite—choose another answer. Think about which structure removes the most recently added item first.'}</div>}
+                  <div className="practice-controls"><button className="reset-btn" onClick={() => { setSelectedAnswer(''); setAnswerSubmitted(false); setAnswerCorrect(false); celebrationTriggeredRef.current = false }}><RotateCcw size={15} /> Reset</button><button className="primary-btn practice-submit" onClick={submitAnswer} disabled={!selectedAnswer || (answerSubmitted && answerIsCorrect)}>{answerSubmitted && answerIsCorrect ? 'Correct answer' : answerSubmitted ? 'Check new answer' : 'Check answer'} <ArrowRight size={16} /></button></div><p className="demo-disclaimer">Sample question · No score or progress is saved.</p></div></div>
             </div>
           </section>
+
+          <CodingPlayground />
 
           <section className="dashboard-section section-wrap" id="dashboard">
             <div className="container dashboard-layout">
@@ -336,7 +543,26 @@ function App() {
             <div className="container college-panel"><div className="college-copy reveal"><span className="eyebrow"><Building2 size={14} /> FOR COLLEGES</span><h2>Help students connect learning with opportunity.</h2><p>Explore how structured practice, skill-building activities, and progress visibility could support a campus placement-readiness program.</p><button className="primary-btn" onClick={() => setModal({ title: 'Apply for MOU', eyebrow: 'Institutional collaboration', body: 'This is a frontend preview only. No application is submitted and no partnership is implied. Add a verified contact address or application URL to enable the next step.' })}>Apply for MOU <ArrowRight size={16} /></button><span className="college-disclaimer">Potential features shown for illustration. No partnership claims.</span></div><div className="college-visual reveal"><div className="college-orbit orbit-a" /><div className="college-orbit orbit-b" /><div className="college-center"><GraduationCap size={38} /><span>STUDENT<br />GROWTH</span></div><div className="college-node node-top"><BookOpen size={17} /> Guided learning</div><div className="college-node node-right"><BarChart3 size={17} /> Progress view</div><div className="college-node node-bottom"><Users size={17} /> Cohort practice</div></div></div>
           </section>
 
-          <section className="faq-section section-wrap" id="faq"><div className="container faq-layout"><div className="section-heading reveal"><span className="eyebrow eyebrow-purple"><MessageSquareText size={14} /> GOOD TO KNOW</span><h2>Questions, meet answers.</h2><p>Clear details about the learning and preview experience.</p></div><div className="faq-list">{faqs.map((faq, index) => <article className={`faq-item ${openFaq === index ? 'faq-open' : ''}`} key={faq.question}><h3><button className="faq-question" aria-expanded={openFaq === index} aria-controls={`faq-answer-${index}`} onClick={() => setOpenFaq(openFaq === index ? -1 : index)}>{faq.question}<ChevronDown size={18} /></button></h3>{openFaq === index && <div className="faq-answer" id={`faq-answer-${index}`}><p>{faq.answer}</p></div>}</article>)}</div></div></section>
+          <section className="faq-section section-wrap" id="faq">
+            <div className="container faq-layout">
+              <div className="section-heading reveal">
+                <span className="eyebrow eyebrow-purple"><MessageSquareText size={14} /> GOOD TO KNOW</span>
+                <h2>Questions, meet answers.</h2>
+                <p>Clear details about the learning and preview experience.</p>
+              </div>
+              <div className="faq-list">
+                {faqs.map((faq, index) => (
+                  <article className={`faq-item ${openFaq === index ? 'faq-open' : ''}`} key={faq.question}>
+                    <h3><button className="faq-question" aria-expanded={openFaq === index} aria-controls={`faq-answer-${index}`} onClick={() => setOpenFaq(openFaq === index ? -1 : index)}>{faq.question}<ChevronDown size={18} /></button></h3>
+                    <AnimatePresence initial={false}>
+                      {openFaq === index && <motion.div className="faq-answer" id={`faq-answer-${index}`} initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.22 }}><p>{faq.answer}</p></motion.div>}
+                    </AnimatePresence>
+                  </article>
+                ))}
+              </div>
+              <DokiAssistant />
+            </div>
+          </section>
 
           <section className="final-cta-section"><div className="container final-cta"><div className="cta-decoration cta-decoration-one" /><div className="cta-decoration cta-decoration-two" /><div className="cta-copy"><span className="eyebrow"><Sparkles size={14} /> YOUR NEXT STEP STARTS HERE</span><h2>Make today count.<br /><span>Build what’s next.</span></h2><p>Start with one small step on your Learn → Build → Grow journey.</p></div><div className="cta-actions"><button className="cta-white-btn" onClick={() => scrollToSection('learn')}>Explore the learning path <ArrowRight size={17} /></button><button className="cta-outline-btn" onClick={startPractice}>Try a practice question <Code2 size={16} /></button></div></div></section>
         </main>
@@ -344,11 +570,12 @@ function App() {
         <div className="floating-tools" aria-label="Quick actions"><button onClick={() => scrollToSection('learn')} title="Learning roadmap"><Map size={18} /><span>Roadmap</span></button><button onClick={startPractice} title="Try a challenge"><Code2 size={18} /><span>Try a challenge</span></button><button className="floating-top" onClick={() => scrollToSection('home')} title="Back to top" aria-label="Back to top"><ArrowUp size={18} /></button></div>
         <nav className="mobile-bottom-nav" aria-label="Quick section navigation">{sidebarLinks.slice(0, 5).map(({ id, label, icon: Icon }) => <button key={id} type="button" className={`bottom-nav-item ${activeSection === id ? 'active' : ''}`} onClick={() => scrollToSection(id)} aria-label={label}><Icon size={18} /><span>{label}</span></button>)}</nav>
 
-        <footer className="site-footer"><div className="container footer-grid"><div className="footer-brand-col"><a href="#home" className="brand footer-brand" aria-label="Dkoder homepage"><span className="brand-mark">D</span><span className="brand-text">Dkoder</span></a><p>Learn. Build. Grow.<br />Your next big step starts with one focused practice session.</p><span className="footer-demo-tag"><span /> A learning experience preview</span></div><div><h3>Explore</h3><ul><li><button onClick={() => scrollToSection('learn')}>Learning journey</button></li><li><button onClick={() => scrollToSection('features')}>How Dkoder helps</button></li><li><button onClick={() => scrollToSection('tracks')}>Company tracks</button></li></ul></div><div><h3>Try a demo</h3><ul><li><button onClick={startPractice}>Practice question</button></li><li><button onClick={() => scrollToSection('dashboard')}>Dashboard preview</button></li><li><button onClick={() => scrollToSection('hackathons')}>Hackathon formats</button></li></ul></div><div><h3>For institutions</h3><ul><li><button onClick={() => scrollToSection('colleges')}>College overview</button></li><li><button onClick={() => setModal({ title: 'Apply for MOU', eyebrow: 'College partnerships', body: 'This page preview does not process applications. A verified Dkoder contact or application destination is needed to continue.' })}>Apply for MOU</button></li><li><button onClick={() => scrollToSection('faq')}>Common questions</button></li></ul></div></div><div className="container footer-bottom"><span>© Dkoder · Product concept preview</span><button onClick={() => scrollToSection('home')}><ArrowUp size={14} /> Back to top</button></div></footer>
+        <footer className="site-footer"><div className="container footer-grid"><div className="footer-brand-col"><a href="#home" className="brand footer-brand" aria-label="Dkoder homepage"><span className="brand-mark">D</span><span className="brand-text">Dkoder</span></a><p>Learn. Build. Grow.<br />Your next big step starts with one focused practice session.</p><span className="footer-demo-tag"><span /> A learning experience preview</span></div><div><h3>Explore</h3><ul><li><button onClick={() => scrollToSection('learn')}>Learning journey</button></li><li><button onClick={() => scrollToSection('features')}>How Dkoder helps</button></li><li><button onClick={() => scrollToSection('tracks')}>Company tracks</button></li></ul></div><div><h3>Try a demo</h3><ul><li><button onClick={startPractice}>Practice question</button></li><li><button onClick={() => scrollToSection('playground')}>Coding playground</button></li><li><button onClick={() => scrollToSection('dashboard')}>Dashboard preview</button></li><li><button onClick={() => scrollToSection('hackathons')}>Hackathon formats</button></li></ul></div><div><h3>For institutions</h3><ul><li><button onClick={() => scrollToSection('colleges')}>College overview</button></li><li><button onClick={() => setModal({ title: 'Apply for MOU', eyebrow: 'College partnerships', body: 'This page preview does not process applications. A verified Dkoder contact or application destination is needed to continue.' })}>Apply for MOU</button></li><li><button onClick={() => scrollToSection('faq')}>Common questions</button></li></ul></div></div><div className="container footer-bottom"><span>© Dkoder · Product concept preview</span><button onClick={() => scrollToSection('home')}><ArrowUp size={14} /> Back to top</button></div></footer>
       </div>
 
       {modal && <div className="modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setModal(null) }}><section className="info-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><button className="modal-close" onClick={() => setModal(null)} aria-label="Close dialog"><X size={19} /></button><span className="eyebrow eyebrow-purple"><Sparkles size={14} /> {modal.eyebrow}</span><h2 id="modal-title">{modal.title}</h2><p>{modal.body}</p><button className="primary-btn modal-done" onClick={() => setModal(null)}>Got it <Check size={16} /></button></section></div>}
     </div>
+    </MotionConfig>
   )
 }
 

@@ -1,0 +1,25 @@
+.coding-playground-section { padding-top: 72px; padding-bottom: 74px; background: linear-gradient(180deg,#fffdf9,#f7f1ff 48%,#fffaf0); }
+.playground-layout { display: grid; grid-template-columns: minmax(240px,.7fr) minmax(0,1.3fr); align-items: center; gap: 45px; }
+.playground-copy h2 { margin-top: 15px; color: #2d2050; font: 800 clamp(33px,4vw,47px)/1.04 'Manrope',sans-serif; letter-spacing: -1.6px; }
+.playground-copy h2 span { color: #8b4bd0; }
+.playground-copy > p { max-width: 380px; margin-top: 13px; color: #685f70; font-size: 12px; line-height: 1.7; }
+.playground-demo-badge { display: inline-flex; align-items: center; gap: 7px; margin-top: 18px; padding: 8px 10px; border: 1px solid #e9e0f0; border-radius: 99px; color: #67428e; background: #fff; font-size: 9px; font-weight: 800; }
+.playground-window { min-width: 0; overflow: hidden; border: 1px solid #37274a; border-radius: 17px; background: #17131e; box-shadow: 0 20px 50px #27183928; }
+.playground-toolbar { min-height: 48px; display: flex; align-items: center; gap: 11px; padding: 0 13px; border-bottom: 1px solid #ffffff16; background: #211c29; }
+.playground-window-dots { display: flex; gap: 4px; margin-right: auto; }.playground-window-dots i { width: 7px; height: 7px; border-radius: 50%; background: #efaaa2; }.playground-window-dots i:nth-child(2) { background: #f1cb6b; }.playground-window-dots i:nth-child(3) { background: #85c39d; }
+.playground-example-label { color: #a99db5; font-size: 9px; }
+.playground-toolbar select { max-width: 150px; padding: 7px 9px; border: 1px solid #473956; border-radius: 8px; color: #f7f0ff; background: #30263a; font-size: 9px; }
+.playground-language { padding: 5px 7px; border-radius: 6px; color: #dcc2ff; background: #6a3e902b; font: 700 8px 'DM Sans',sans-serif; }
+.playground-editor-wrap { height: 224px; display: grid; grid-template-columns: 37px minmax(0,1fr); overflow: hidden; padding: 12px 0; background: linear-gradient(90deg,#1d1825 0 37px,#17131e 37px); }
+.playground-line-numbers { display: flex; align-items: flex-end; flex-direction: column; gap: 0; padding-right: 10px; color: #786d83; font: 11px/1.55 Consolas,monospace; user-select: none; }
+.playground-editor { width: 100%; height: 100%; resize: none; padding: 0 14px; border: 0; outline: 0; color: #e1d8ed; background: transparent; font: 11px/1.55 Consolas,'Courier New',monospace; tab-size: 2; white-space: pre; overflow: auto; }
+.playground-editor:focus-visible { outline: 1px solid #825db1; outline-offset: -2px; }
+.playground-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 13px; border-top: 1px solid #ffffff12; color: #a79cab; background: #211c29; }
+.playground-actions > p { font-size: 8px; line-height: 1.4; }.playground-actions > div { display: flex; gap: 7px; }
+.playground-reset,.playground-run { min-height: 31px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 0 9px; border: 1px solid #51445d; border-radius: 8px; color: #e4d8f2; background: #32283b; font-size: 9px; font-weight: 750; transition: .18s ease; }.playground-reset:hover { background: #42334e; }.playground-run { border-color: #ffc928; color: #2d2042; background: #ffc928; }.playground-run:hover { box-shadow: 0 0 15px #ffc92855; transform: translateY(-1px); }
+.playground-terminal { min-height: 88px; padding: 9px 13px 10px; border-top: 1px solid #ffffff10; background: #100e15; }
+.terminal-heading { display: flex; justify-content: space-between; color: #988ba2; font-size: 8px; font-weight: 800; letter-spacing: .08em; }.terminal-heading span:first-child { display: inline-flex; align-items: center; gap: 5px; color: #c1b1d0; }
+.playground-terminal pre { min-height: 43px; margin-top: 7px; color: #a9e6b8; font: 10px/1.5 Consolas,monospace; white-space: pre-wrap; }
+.playground-disclaimer { padding: 8px 13px 10px; color: #978d9e; background: #100e15; font-size: 8px; }
+@media (max-width: 850px) { .playground-layout { grid-template-columns: 1fr; gap: 22px; }.playground-copy > p { max-width: 600px; } }
+@media (max-width: 520px) { .coding-playground-section { padding: 48px 0; }.playground-layout { gap: 18px; }.playground-window { border-radius: 13px; }.playground-toolbar { gap: 7px; padding-inline: 9px; }.playground-toolbar select { max-width: 128px; }.playground-editor-wrap { height: 200px; }.playground-actions { align-items: flex-start; flex-direction: column; }.playground-actions > div { align-self: flex-end; } }

@@ -1,0 +1,78 @@
+.doki-assistant {
+  position: sticky;
+  top: 112px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  min-width: 0;
+  padding: 8px 6px 16px;
+}
+
+.doki-prompt {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 100%;
+  padding: 10px 13px;
+  border: 1px solid #fff;
+  border-radius: 999px;
+  color: #4f2a83;
+  background: #fff;
+  box-shadow: 0 9px 22px #3a205016;
+  font-size: 11px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.doki-prompt svg { color: #b78600; }
+.doki-launcher { position: relative; width: 172px; height: 195px; display: grid; place-items: center; margin-top: 8px; padding: 0; border: 0; background: transparent; }
+.doki-launcher:focus-visible { outline-offset: -2px; border-radius: 24px; }
+.doki-launcher-hint { position: absolute; right: -3px; bottom: 12px; display: inline-flex; align-items: center; gap: 5px; padding: 8px 11px; border: 1px solid #fff; border-radius: 999px; color: #fff; background: #5524a8; box-shadow: 0 8px 16px #5524a83b; font-size: 10px; font-weight: 800; transition: transform .2s ease; }
+.doki-launcher:hover .doki-launcher-hint { transform: translateY(-3px); }
+.doki-mascot { position: relative; width: 145px; height: 167px; filter: drop-shadow(0 14px 13px #35116f28); animation: doki-float 4.2s ease-in-out infinite; }
+.doki-antenna { position: absolute; top: 1px; left: 69px; width: 7px; height: 25px; border-radius: 8px; background: #8c55d0; }
+.doki-antenna i { position: absolute; top: -5px; left: -4px; width: 15px; height: 15px; border: 3px solid #fff3b3; border-radius: 50%; background: #ffc928; box-shadow: 0 0 12px #ffc92891; }
+.doki-head { position: absolute; top: 24px; left: 21px; width: 105px; height: 85px; display: grid; place-items: center; border: 4px solid #ffc928; border-radius: 35px 35px 30px 30px; background: linear-gradient(145deg,#a879e8,#6330ad 62%,#492083); box-shadow: inset 0 5px 8px #ffffff64, 0 8px 13px #3d17672b; }
+.doki-face { position: relative; width: 77px; height: 49px; border: 2px solid #e8d7ff; border-radius: 19px; background: linear-gradient(140deg,#fffefa,#f2eaff); box-shadow: 0 0 15px #fff4a583; }
+.doki-eye { position: absolute; top: 16px; width: 9px; height: 12px; border-radius: 50%; background: #5524a8; animation: doki-blink 5s ease-in-out infinite; }
+.doki-eye-left { left: 17px; }.doki-eye-right { right: 17px; }
+.doki-smile { position: absolute; bottom: 8px; left: 32px; width: 13px; height: 7px; border-bottom: 2px solid #8b53c7; border-radius: 50%; }
+.doki-cheek { position: absolute; top: 30px; width: 9px; height: 5px; border-radius: 50%; background: #f4b3bd; opacity: .8; }
+.doki-cheek-left { left: 8px; }.doki-cheek-right { right: 8px; }
+.doki-ear { position: absolute; top: 54px; z-index: -1; width: 17px; height: 29px; border: 3px solid #ffc928; border-radius: 8px; background: #713bb8; }
+.doki-ear-left { left: 11px; }.doki-ear-right { right: 11px; }
+.doki-neck { position: absolute; top: 106px; left: 66px; width: 16px; height: 13px; background: #ffc928; }
+.doki-body { position: absolute; top: 116px; left: 35px; width: 77px; height: 44px; display: flex; align-items: center; justify-content: center; border: 3px solid #ffc928; border-radius: 23px 23px 17px 17px; color: #fff0a5; background: linear-gradient(140deg,#7e48c1,#421677); box-shadow: inset 0 4px 7px #ffffff4a; }
+.doki-body i { position: absolute; right: 9px; bottom: 8px; width: 6px; height: 6px; border-radius: 50%; background: #8ff0bf; box-shadow: 0 0 8px #8ff0bf; }
+.doki-arm { position: absolute; top: 125px; width: 13px; height: 29px; border: 3px solid #ffc928; border-radius: 9px; background: #7540b9; }
+.doki-arm-left { left: 24px; transform: rotate(16deg); }.doki-arm-right { right: 24px; transform: rotate(-16deg); }
+.doki-shadow { position: absolute; right: 22px; bottom: -2px; left: 22px; height: 13px; border-radius: 50%; background: #45207824; filter: blur(6px); }
+.doki-chat-panel { position: absolute; z-index: 20; top: 5px; right: calc(100% + 15px); width: min(340px, calc(100vw - 38px)); max-height: min(570px, calc(100vh - 48px)); display: flex; flex-direction: column; overflow: hidden; border: 1px solid #eee5f5; border-radius: 19px; background: #fffefa; box-shadow: 0 24px 64px #29164138; transform-origin: top right; }
+.doki-chat-header { display: flex; align-items: center; gap: 10px; padding: 13px 14px; border-bottom: 1px solid #f0eaf4; background: linear-gradient(105deg,#f5efff,#fff8dc); }
+.doki-chat-avatar { position: relative; width: 38px; height: 38px; overflow: hidden; border: 1px solid #eadbff; border-radius: 12px; background: #fff; }
+.doki-chat-avatar .doki-mascot { transform: scale(.27); transform-origin: top left; animation: none; }
+.doki-chat-header > div:nth-child(2) { display: grid; gap: 3px; }.doki-chat-header strong { color: #34204e; font: 800 13px 'Manrope',sans-serif; }.doki-chat-header > div:nth-child(2) span { color: #85798d; font-size: 9px; }
+.doki-close { width: 31px; height: 31px; display: grid; place-items: center; margin-left: auto; border: 0; border-radius: 9px; color: #665877; background: #ffffffc7; }.doki-close:hover { color: #5524a8; background: #fff; }
+.doki-chat-log { display: grid; align-content: start; gap: 9px; min-height: 100px; max-height: 175px; overflow-y: auto; padding: 12px; }
+.doki-welcome,.doki-message { max-width: 92%; padding: 10px 11px; border-radius: 12px 12px 12px 3px; color: #554b5e; background: #f4effb; font-size: 10px; line-height: 1.55; }
+.doki-message.you { justify-self: end; border-radius: 12px 12px 3px 12px; color: #fff; background: #5524a8; }
+.doki-typing { display: inline-flex; align-items: center; gap: 4px; width: fit-content; padding: 9px 11px; border: 1px solid #eee5f5; border-radius: 12px 12px 12px 3px; color: #877894; background: #fff; font-size: 9px; }
+.doki-typing i { width: 5px; height: 5px; border-radius: 50%; background: #8b56c1; animation: doki-typing-dot .8s ease-in-out infinite alternate; }
+.doki-typing i:nth-child(2) { animation-delay: .16s; }.doki-typing i:nth-child(3) { margin-right: 3px; animation-delay: .32s; }
+.doki-suggestions { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 12px 11px; }
+.doki-suggestions button { padding: 7px 9px; border: 1px solid #e8def4; border-radius: 999px; color: #5c378b; background: #fff; text-align: left; font-size: 9px; font-weight: 700; transition: background .18s ease,border-color .18s ease; }
+.doki-suggestions button:hover { border-color: #cbb3ec; background: #f5efff; }
+.doki-input-row { display: flex; gap: 7px; padding: 10px 11px; border-top: 1px solid #f0eaf4; }
+.doki-input-row input { width: 100%; min-width: 0; padding: 10px 11px; border: 1px solid #e8e0ec; border-radius: 10px; outline: none; color: #30243c; background: #fff; font-size: 11px; }
+.doki-input-row input:focus { border-color: #9967d0; box-shadow: 0 0 0 3px #5524a81c; }
+.doki-input-row button { width: 37px; height: 37px; flex: 0 0 auto; display: grid; place-items: center; border: 0; border-radius: 10px; color: #2d1b4a; background: #ffc928; }.doki-input-row button:disabled { opacity: .45; }
+.doki-demo-note { padding: 0 12px 10px; color: #958b9a; font-size: 8px; text-align: center; }
+.doki-launcher:hover .doki-arm-right { transform: rotate(-35deg) translateY(-2px); }
+.doki-arm-right { transform-origin: 50% 8px; transition: transform .2s ease; }
+@keyframes doki-float { 0%,100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-7px) rotate(1deg); } }
+@keyframes doki-blink { 0%,45%,48%,100% { transform: scaleY(1); } 46%,47% { transform: scaleY(.12); } }
+@keyframes doki-typing-dot { to { opacity: .35; transform: translateY(-3px); } }
+@media (max-width: 900px) { .doki-assistant { position: relative; top: auto; flex-direction: row; justify-content: flex-start; gap: 12px; padding: 0; }.doki-prompt { align-self: flex-start; }.doki-launcher { width: 96px; height: 120px; margin: 0; }.doki-mascot { transform: scale(.68); transform-origin: center; }.doki-launcher-hint { right: -10px; bottom: 0; }.doki-chat-panel { top: 100%; right: auto; left: 0; width: min(360px, calc(100vw - 38px)); max-height: min(570px, calc(100vh - 128px)); transform-origin: top left; } }
+@media (max-width: 700px) { .faq-layout > .section-heading { order: 1; }.faq-layout > .doki-assistant { order: 2; }.faq-layout > .faq-list { order: 3; } }
+@media (max-width: 520px) { .doki-assistant { align-items: center; gap: 5px; }.doki-prompt { padding: 8px 10px; font-size: 9px; }.doki-launcher { width: 74px; height: 98px; }.doki-mascot { transform: scale(.56); }.doki-launcher-hint { right: -15px; bottom: 0; padding: 6px 8px; font-size: 9px; }.doki-chat-panel { position: fixed; z-index: 110; top: auto; right: 12px; bottom: calc(82px + env(safe-area-inset-bottom)); left: 12px; width: auto; max-height: min(70vh, 580px); transform-origin: bottom center; } }
+@media (prefers-reduced-motion: reduce) { .doki-mascot,.doki-eye,.doki-typing i { animation: none; }.doki-arm-right { transition: none; } }

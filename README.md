@@ -9,12 +9,23 @@ A modern React + Vite landing page redesign for Dkoder with a yellow-and-purple 
 - JavaScript (ES6+)
 - CSS
 - Lucide React
+- Motion for React
+- Three.js and React Three Fiber for the Skill Engine
+- Lenis smooth scrolling (disabled for reduced-motion preferences)
 
 ## Project Structure
 
 - `src/App.jsx` — main page composition
 - `src/App.css` — page styling and responsive layout
 - `src/index.css` — global reset and base styles
+- `src/components/SkillEngine3D.jsx` — lazy-loaded 3D Skill Engine with a CSS fallback
+- `src/components/DokiAssistant.jsx` — accessible FAQ helper with predefined, frontend-only responses
+- `src/components/DokiAssistant.css` — Doki mascot and responsive chat panel styles
+- `src/components/SkillRoadmapDemo.jsx` — goal-selectable illustrative learning roadmap
+- `src/components/SkillRoadmapDemo.css` — responsive roadmap demo styles
+- `src/components/CodingPlayground.jsx` — editable code preview with predefined sample outputs (no arbitrary execution)
+- `src/components/CodingPlayground.css` — responsive editor and terminal preview styles
+- `src/components/InteractiveButton.jsx` — reusable Motion CTA with magnetic hover and click feedback
 - `src/assets/` — starter assets (unused in final build)
 
 ## Setup and Run
@@ -77,5 +88,10 @@ The build output will be generated in the `dist` folder.
 
 ## Notes
 
-- The project is a frontend-only demo with interactive mock behavior for dashboard actions, company filters, and FAQ accordions.
+- The project is a frontend-only demo. Company tracks, dashboard metrics, and event cards are illustrative previews.
+- Doki uses predefined local responses; messages are not sent to a backend or saved.
+- The Skill Engine scene is code-generated and lazy-loaded. A CSS-built engine remains visible if WebGL is unavailable.
+- Motion and continuous decorative movement respect `prefers-reduced-motion`.
+- Light/dark appearance preference is saved locally in the browser.
+- Roadmap completion and coding output are illustrative frontend previews; nothing is saved and the editor does not execute arbitrary code.
 - The design follows the required yellow-purple branding and includes responsiveness plus reduced-motion support.
